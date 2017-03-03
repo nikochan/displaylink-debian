@@ -30,7 +30,8 @@ fi
 }
 
 # Dependencies
-deps=(unzip linux-headers-$(uname -r) dkms lsb-release linux-source)
+# deps=(unzip linux-headers-$(uname -r) dkms lsb-release linux-source)
+deps=(unzip raspberrypi-kernel-headers dkms lsb-release linux-source)
 
 dep_check() {
 echo -e "\nChecking dependencies\n"
@@ -110,7 +111,7 @@ then
 		exit 1
 	fi
 # Debian
-elif [ "$lsb" == "Debian" ];
+elif [ "$lsb" == "Debian" ] || [ "$lsb" == "Raspbian" ];
 then
 	if [ $codename == "jessie" ] || [ $codename == "stretch" ] || [ $codename == "sid" ] || [ $codename == "n/a" ];
 	then
@@ -211,7 +212,7 @@ sysinitdaemon=$(sysinitdaemon_get)
 # modify displaylink-installer.sh
 sed -i "s/SYSTEMINITDAEMON=unknown/SYSTEMINITDAEMON=$sysinitdaemon/g" $driver_dir/displaylink-driver-${version}/displaylink-installer.sh
 
-if [ "$lsb" == "Debian" ] || [ "$lsb" == "Kali" ];
+if [ "$lsb" == "Debian" ] || [ "$lsb" == "Kali" ] || [ "$lsb" == "Raspbian" ];
 then
 	sed -i 's#/lib/modules/$KVER/build/Kconfig#/lib/modules/$KVER/build/scripts/kconfig/conf#g' $driver_dir/displaylink-driver-${version}/displaylink-installer.sh
 	ln -s /lib/modules/$(uname -r)/build/Makefile /lib/modules/$(uname -r)/build/Kconfig
@@ -230,7 +231,7 @@ echo -e "\nPerforming post install steps\n"
 
 # fix: issue #42 (dlm.service can't start)
 # note: for this to work libstdc++6 package needs to be installed from >= Stretch
-if [ "$lsb" == "Debian" ] || [ "$lsb" == "Kali" ];
+if [ "$lsb" == "Debian" ] || [ "$lsb" == "Kali" ] || [ "$lsb" == "Raspbian" ];
 then
 	ln -s /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /opt/displaylink/libstdc++.so.6
 fi
@@ -246,7 +247,7 @@ separator
 echo -e "\nUninstalling ...\n"
 
 displaylink-installer uninstall
-if [ "$lsb" == "Debian" ] || [ "$lsb" == "Kali" ];
+if [ "$lsb" == "Debian" ] || [ "$lsb" == "Kali" ] || [ "$lsb" == "Raspbian" ];
 then
 	rm /lib/modules/$(uname -r)/build/Kconfig
 fi
